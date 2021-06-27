@@ -1,18 +1,43 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <entries-table :entries="entries" />
   </div>
 </template>
 
 <script lang="ts">
+import GeneralShortenerController, {
+  EntryModel,
+} from "@/controllers/GeneralShortenerController";
 import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
-
+import EntriesTable from "@/components/EntriesTable.vue";
 @Options({
   components: {
-    HelloWorld,
+    EntriesTable,
   },
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  entries: EntryModel[] | undefined;
+
+  public async mounted(): Promise<void> {
+    if (!localStorage.getItem("server")) {
+      // https://michaelnthiessen.com/redirect-in-vue/
+      this.$router.push("login");
+    } else {
+      const [data, error] = await GeneralShortenerController.listEntries(
+        this.axios,
+        localStorage.getItem("server") || "",
+        localStorage.getItem("token") || ""
+      );
+      if (error) {
+        localStorage.setItem("server", "");
+        localStorage.setItem("token", "");
+        this.$router.push("login");
+      } else {
+        this.entries = data;
+        this.$forceUpdate();
+      }
+    }
+    return;
+  }
+}
 </script>
