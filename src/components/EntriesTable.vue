@@ -84,7 +84,7 @@ import urlJoin from "proper-url-join";
   },
 })
 export default class EntriesTable extends Vue {
-  entries!: EntryModel[];
+  entries: EntryModel[] = [];
 
   tagColors = {
     file: "primary",
@@ -123,7 +123,6 @@ export default class EntriesTable extends Vue {
     };
 
     this.$emit("deletion", payload);
-    return;
   }
 }
 

@@ -19,6 +19,25 @@ export default class GeneralShortenerController {
       return [undefined, _];
     }
   }
+
+  static async deleteEntry(
+    axios: AxiosStatic,
+    baseEndpoint: string,
+    bearerToken: string,
+    slug: string
+  ): Promise<Error | undefined> {
+    try {
+      const result = await axios.delete(urlJoin(baseEndpoint, slug), {
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
+      const data: EntryListModel = result.data.message;
+      return undefined;
+    } catch (_) {
+      return _;
+    }
+  }
 }
 
 export interface EntryListModel {

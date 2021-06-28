@@ -27,6 +27,10 @@
         "
         :src="href"
       />
+      <p v-if="type == 'url'">
+        Open url
+        <el-link type="primary" target="_blank" :href="href">here</el-link>
+      </p>
     </div>
   </el-dialog>
 </template>
