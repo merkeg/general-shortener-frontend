@@ -1,7 +1,18 @@
 <template>
-  <div class="home">
-    <entries-table :entries="entries" />
-  </div>
+  <el-container>
+    <el-header>
+      <navbar></navbar>
+    </el-header>
+    <el-main>
+      <entry-preview
+        :trigger="dialogTrigger"
+        :href="href"
+        :mime="mime"
+        :type="type"
+      />
+      <entries-table :entries="entries" @preview="preview" />
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
@@ -9,14 +20,23 @@ import GeneralShortenerController, {
   EntryModel,
 } from "@/controllers/GeneralShortenerController";
 import { Options, Vue } from "vue-class-component";
-import EntriesTable from "@/components/EntriesTable.vue";
+import EntriesTable, { PreviewPayload } from "@/components/EntriesTable.vue";
+import Navbar from "@/components/Navbar.vue";
+import EntryPreview from "@/components/EntryPreview.vue";
+
 @Options({
   components: {
     EntriesTable,
+    Navbar,
+    EntryPreview,
   },
 })
-export default class Home extends Vue {
+export default class HomeView extends Vue {
   entries: EntryModel[] | undefined;
+  href = "";
+  type = "";
+  mime = "";
+  dialogTrigger = 0;
 
   public async mounted(): Promise<void> {
     if (!localStorage.getItem("server")) {
@@ -38,6 +58,15 @@ export default class Home extends Vue {
       }
     }
     return;
+  }
+
+  public preview(payload: PreviewPayload): boolean {
+    console.log("I am here");
+    this.href = payload.url;
+    this.type = payload.type;
+    this.mime = payload.mime;
+    this.dialogTrigger++;
+    return true;
   }
 }
 </script>
